@@ -23,6 +23,9 @@ const mockLedgerState: ContractIndexerState = {
   lastUpdated: new Date().toLocaleTimeString(),
 };
 
+// Flag to track indexer availability once checked
+let isRemoteIndexerAvailable = true;
+
 export async function fetchLiveIndexerState(
   contractAddress: string,
   indexerUrl: string = import.meta.env.VITE_INDEXER_URL || 'https://indexer.preview.midnight.network'
@@ -47,8 +50,8 @@ export async function fetchLiveIndexerState(
   // Update contractAddress in state tracking
   mockLedgerState.contractAddress = contractAddress;
 
-  // If indexer URL is empty or explicitly set to mock, return current active state immediately
-  if (!indexerUrl || indexerUrl === 'mock') {
+  // If indexer URL is empty, 'mock', or previously failed with 404, return active state directly to avoid browser DevTools console noise
+  if (!indexerUrl || indexerUrl === 'mock' || !isRemoteIndexerAvailable) {
     return { ...mockLedgerState, lastUpdated: new Date().toLocaleTimeString() };
   }
 
@@ -64,6 +67,12 @@ export async function fetchLiveIndexerState(
         variables: { address: contractAddress },
       }),
     });
+
+    if (response.status === 404) {
+      // Indexer endpoint returns 404 on preview network; disable further network fetches to keep console clean
+      isRemoteIndexerAvailable = false;
+      return { ...mockLedgerState, lastUpdated: new Date().toLocaleTimeString() };
+    }
 
     if (response.ok) {
       const result = await response.json();
@@ -83,7 +92,7 @@ export async function fetchLiveIndexerState(
       }
     }
   } catch {
-    // Network/cors error catch
+    isRemoteIndexerAvailable = false;
   }
 
   // Graceful Fallback Return
