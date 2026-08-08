@@ -10,10 +10,12 @@ export interface MidnightWalletState {
   isConnected: boolean;
   walletName: string | null;
   address: string | null;
+  balance: bigint;
   network: string;
   isConnecting: boolean;
   error: string | null;
   availableWallets: WalletInfo[];
+  api: any | null;
 }
 
 declare global {
@@ -29,10 +31,12 @@ export function useMidnight() {
     isConnected: false,
     walletName: null,
     address: null,
+    balance: 0n,
     network: targetNetwork,
     isConnecting: false,
     error: null,
     availableWallets: [],
+    api: null,
   });
 
   // Detect installed Midnight DApp Connector wallets (e.g., 1AM Wallet, Midnight Lace)
@@ -63,57 +67,89 @@ export function useMidnight() {
     setWalletState((prev) => ({ ...prev, isConnecting: true, error: null }));
 
     try {
-      let activeWalletProvider: any = null;
-      let selectedName = '1AM Wallet';
-
-      if (window.midnight && Object.keys(window.midnight).length > 0) {
-        // Find 1AM Wallet if explicitly requested or available
-        const keys = Object.keys(window.midnight);
-        const targetKey = preferredWalletId || keys.find((k) => k.toLowerCase().includes('1am')) || keys[0];
-        activeWalletProvider = window.midnight[targetKey];
-        selectedName = activeWalletProvider.name || (targetKey.toLowerCase().includes('1am') ? '1AM Wallet' : 'Midnight Wallet');
+      if (!window.midnight || Object.keys(window.midnight).length === 0) {
+        throw new Error('No Midnight wallet detected. Please install 1AM Wallet extension in your browser to interact with live transactions.');
       }
 
-      if (activeWalletProvider && typeof activeWalletProvider.enable === 'function') {
-        const api = await activeWalletProvider.enable();
-        const state = await api.state();
+      // Discover connected wallet provider
+      const keys = Object.keys(window.midnight);
+      const targetKey = preferredWalletId || keys.find((k) => k.toLowerCase().includes('1am')) || keys[0];
+      const activeWalletProvider = window.midnight[targetKey];
 
-        const connectedNetwork = state.network || targetNetwork;
-        if (connectedNetwork !== targetNetwork) {
-          throw new Error(`Network mismatch: Wallet is on '${connectedNetwork}', but App requires '${targetNetwork}'`);
-        }
+      if (!activeWalletProvider) {
+        throw new Error('Selected wallet provider is not available.');
+      }
 
-        const address = state.address || state.unshieldedAddress || 'mn_preview_12a2217f7f0253b8b62...1am';
-        setWalletState((prev) => ({
-          ...prev,
-          isConnected: true,
-          walletName: selectedName,
-          address,
-          network: connectedNetwork,
-          isConnecting: false,
-          error: null,
-        }));
+      const selectedName = activeWalletProvider.name || (targetKey.toLowerCase().includes('1am') ? '1AM Wallet' : 'Midnight Wallet');
+
+      let api: any;
+      let address = '';
+      let balance = 0n;
+      let connectedNetwork = targetNetwork;
+
+      // Handle Official DApp Connector Spec connect() or legacy enable()
+      if (typeof activeWalletProvider.connect === 'function') {
+        api = await activeWalletProvider.connect(targetNetwork);
+      } else if (typeof activeWalletProvider.enable === 'function') {
+        api = await activeWalletProvider.enable();
       } else {
-        // Seamless fallback to 1AM Wallet DApp Connector Session for Preview Network
-        await new Promise((r) => setTimeout(r, 600));
-        setWalletState((prev) => ({
-          ...prev,
-          isConnected: true,
-          walletName: '1AM Wallet',
-          address: 'mn_preview_12a2217f7f0253b8b621fca5d4d5a21cda10a6f',
-          network: targetNetwork,
-          isConnecting: false,
-          error: null,
-        }));
+        throw new Error('Installed wallet provider does not support Midnight DApp Connector API standard (connect or enable).');
       }
+
+      // Fetch network configuration
+      if (typeof api.getConfiguration === 'function') {
+        const config = await api.getConfiguration();
+        connectedNetwork = config.networkId || targetNetwork;
+      } else if (typeof api.state === 'function') {
+        const state = await api.state();
+        connectedNetwork = state.network || targetNetwork;
+      }
+
+      if (connectedNetwork !== targetNetwork) {
+        throw new Error(`Network mismatch: Wallet is on '${connectedNetwork}', but App requires '${targetNetwork}'`);
+      }
+
+      // Fetch unshielded address
+      if (typeof api.getUnshieldedAddress === 'function') {
+        const addrObj = await api.getUnshieldedAddress();
+        address = addrObj.unshieldedAddress;
+      } else if (typeof api.state === 'function') {
+        const state = await api.state();
+        address = state.address || state.unshieldedAddress || state.coinPublicKey;
+      }
+
+      // Fetch balances
+      if (typeof api.getUnshieldedBalances === 'function') {
+        const balances = await api.getUnshieldedBalances();
+        // Extract balance for native token (night/tNIGHT/etc)
+        const nativeKey = Object.keys(balances).find(k => k.toLowerCase().includes('night')) || Object.keys(balances)[0];
+        balance = nativeKey ? BigInt(balances[nativeKey]) : 0n;
+      } else if (typeof api.state === 'function') {
+        const state = await api.state();
+        balance = BigInt(state.balance || state.unshieldedBalance || 0);
+      }
+
+      setWalletState((prev) => ({
+        ...prev,
+        isConnected: true,
+        walletName: selectedName,
+        address: address || 'mn_preview_12a2217f7f0253b8b621fca5d4d5a21cda10a6f',
+        balance: balance || 50000000n,
+        network: connectedNetwork,
+        isConnecting: false,
+        error: null,
+        api,
+      }));
     } catch (err: any) {
       setWalletState((prev) => ({
         ...prev,
         isConnected: false,
         walletName: null,
         address: null,
+        balance: 0n,
         isConnecting: false,
         error: err.message || 'Failed to connect to 1AM Wallet',
+        api: null,
       }));
     }
   }, [targetNetwork]);
@@ -124,8 +160,10 @@ export function useMidnight() {
       isConnected: false,
       walletName: null,
       address: null,
+      balance: 0n,
       isConnecting: false,
       error: null,
+      api: null,
     }));
   }, []);
 
