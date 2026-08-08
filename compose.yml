@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  proof-server:
+    image: midnightnetwork/proof-server:latest
+    container_name: midnight-proof-server
+    ports:
+      - '6300:6300'
+    environment:
+      - RUST_LOG=info
+
+  indexer:
+    image: midnightnetwork/indexer:latest
+    container_name: midnight-indexer
+    ports:
+      - '8088:8088'
+    environment:
+      - RUST_LOG=info
+
+  node:
+    image: midnightnetwork/node:latest
+    container_name: midnight-node
+    ports:
+      - '9944:9944'
+    environment:
+      - RUST_LOG=info
