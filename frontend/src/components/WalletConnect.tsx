@@ -1,5 +1,6 @@
 import React from 'react';
-import { Wallet, ShieldCheck, AlertCircle, LogOut, Loader2 } from 'lucide-react';
+import { Wallet, ShieldCheck, AlertCircle, LogOut, Loader2, Zap } from 'lucide-react';
+import { WalletInfo } from '../hooks/useMidnight';
 
 interface WalletConnectProps {
   isConnected: boolean;
@@ -8,7 +9,8 @@ interface WalletConnectProps {
   network: string;
   isConnecting: boolean;
   error: string | null;
-  onConnect: () => void;
+  availableWallets: WalletInfo[];
+  onConnect: (walletId?: string) => void;
   onDisconnect: () => void;
   onClearError: () => void;
 }
@@ -20,6 +22,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
   network,
   isConnecting,
   error,
+  availableWallets,
   onConnect,
   onDisconnect,
   onClearError,
@@ -45,15 +48,11 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
                 gap: '0.5rem',
               }}
             >
-              <div
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--success-green)',
-                }}
-              />
-              <span className="font-mono">{address?.substring(0, 10)}...{address?.substring(address.length - 4)}</span>
+              <Zap size={14} color="#00f2fe" />
+              <span style={{ fontWeight: 600, color: '#ffffff' }}>{walletName || '1AM Wallet'}</span>
+              <span className="font-mono" style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                ({address?.substring(0, 10)}...{address?.substring(address.length - 4)})
+              </span>
             </div>
 
             <button onClick={onDisconnect} className="btn btn-secondary" style={{ padding: '0.5rem' }} title="Disconnect Wallet">
@@ -61,9 +60,9 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
             </button>
           </div>
         ) : (
-          <button onClick={onConnect} disabled={isConnecting} className="btn btn-primary">
+          <button onClick={() => onConnect()} disabled={isConnecting} className="btn btn-primary" style={{ gap: '0.6rem' }}>
             {isConnecting ? <Loader2 size={16} className="spin" /> : <Wallet size={16} />}
-            {isConnecting ? 'Connecting...' : 'Connect Midnight Wallet'}
+            {isConnecting ? 'Connecting 1AM Wallet...' : 'Connect 1AM Wallet'}
           </button>
         )}
       </div>
@@ -80,7 +79,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            maxWidth: '360px',
+            maxWidth: '380px',
           }}
         >
           <AlertCircle size={14} style={{ flexShrink: 0 }} />
