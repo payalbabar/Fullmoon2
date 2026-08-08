@@ -2,6 +2,7 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useMidnight } from './hooks/useMidnight';
 import { WalletConnect } from './components/WalletConnect';
+import { MetaMaskWallet } from './components/MetaMaskWallet';
 import { LotteryView } from './components/LotteryView';
 import { Shield } from 'lucide-react';
 
@@ -25,18 +26,21 @@ export function App() {
             </div>
           </div>
 
-          <WalletConnect
-            isConnected={midnight.isConnected}
-            walletName={midnight.walletName}
-            address={midnight.address}
-            network={midnight.network}
-            isConnecting={midnight.isConnecting}
-            error={midnight.error}
-            availableWallets={midnight.availableWallets}
-            onConnect={midnight.connectWallet}
-            onDisconnect={midnight.disconnectWallet}
-            onClearError={midnight.clearError}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <MetaMaskWallet />
+            <WalletConnect
+              isConnected={midnight.isConnected}
+              walletName={midnight.walletName}
+              address={midnight.address}
+              network={midnight.network}
+              isConnecting={midnight.isConnecting}
+              error={midnight.error}
+              availableWallets={midnight.availableWallets}
+              onConnect={midnight.connectWallet}
+              onDisconnect={midnight.disconnectWallet}
+              onClearError={midnight.clearError}
+            />
+          </div>
         </header>
 
         {/* Main Content */}
