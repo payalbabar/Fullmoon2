@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "@tanstack/react-query": "^5.101.4",
     "decentralized-lottery": "file:..",
     "lucide-react": "^0.428.0",
     "react": "^18.3.1",
