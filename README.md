@@ -7,8 +7,8 @@ Traditional blockchain lotteries broadcast all participant wallet addresses and 
 
 ## Smart Contract Deployment
 - **Network:** Preview
-- **Deployed contract ID:** `0x0200325b543c46b160e2802c323d868144e6985589643dc64f791a2fa8c7`
-- **Deployer Address:** `mn_preview_12a2217f7f0253b8b621fca5d4d5a21cda10a6f`
+- **Deployed contract ID:** `0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87`
+- **Deployer Address:** `mn_preview_15c3a9399b73b87d0bc29fd38151d64634751fe`
 
 ## Key Features
 - **Privacy-Preserving Ticket Entries:** Participants deposit entry fees into the pool while proving ownership via a ZK witness commitment. Private ticket salts are generated at runtime and never revealed on-chain.
