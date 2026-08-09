@@ -1,69 +1,248 @@
-# Decentralized Lottery
+# 🎰 Midnight Privacy Lottery
 
-Let participants deposit a fixed amount of tokens into a pool to enter a lottery round. Use a verifiable random function (like Chainlink VRF) to fairly select a winner, and automatically transfer the pooled funds to them.
+> A fully decentralized, privacy-preserving lottery dApp built on **Midnight Network** using **Compact zero-knowledge smart contracts**.
 
-## Project Vision
-Traditional blockchain lotteries broadcast all participant wallet addresses and entry transactions publicly on-chain, creating privacy risks and exposing user token balances to tracking tools. This Decentralized Lottery built on the Midnight Network leverages Compact zero-knowledge smart contracts to allow users to buy lottery tickets and claim prizes with full privacy. On-chain observers can monitor the total pot and draw results, but can never link individual ticket commitments to real-world wallet identities or unrevealed ticket secrets.
+![Midnight Network](https://img.shields.io/badge/Midnight-Preview_Network-7952ff?style=for-the-badge)
+![Smart Contract](https://img.shields.io/badge/Contract-Compact_ZK-00f2fe?style=for-the-badge)
+![React](https://img.shields.io/badge/React-18-61dafb?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-## Smart Contract Deployment
-- **Network:** Preview
-- **Deployed contract ID:** `0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87`
-- **Deployer Address:** `mn_preview_15c3a9399b73b87d0bc29fd38151d64634751fe`
+---
 
-## Key Features
-- **Privacy-Preserving Ticket Entries:** Participants deposit entry fees into the pool while proving ownership via a ZK witness commitment. Private ticket salts are generated at runtime and never revealed on-chain.
-- **Fair Verifiable Random Selection:** Incorporates verifiable seed disclosure to select winning ticket indices objectively.
-- **Zero-Knowledge Prize Claims:** Winners submit a ZK proof demonstrating that their ticket witness secret matches the winning commitment without exposing non-winning participant identities.
-- **Modern React + Vite Frontend:** Interactive glassmorphic dark interface with live ZK proof generation indicators and automatic Midnight Lace DApp Connector wallet integration.
+## 🧠 Project Vision
 
-## Future Scope
-- **Multi-Round Automations:** Automated scheduled rollover for unclaimed prize pots across consecutive lottery rounds.
-- **Shielded Token Pool Integration:** Direct integration with Midnight shielded tokens for completely untraceable payout transfers.
-- **Cross-Chain VRF Oracles:** Direct integration with Chainlink VRF oracles for decentralized cross-chain entropy verification.
+Traditional blockchain lotteries broadcast all participant wallet addresses and entry transactions publicly on-chain, creating **privacy risks** and exposing user token balances to tracking tools.
 
-## Tech Stack
-- **Smart Contract:** Compact (`contracts/lottery.compact`)
-- **Frontend Framework:** React 18, Vite 5, TypeScript
-- **Wallet Provider:** Midnight DApp Connector API (`window.midnight`)
-- **Styling:** Custom Vanilla CSS Design System with Glassmorphic Aesthetics
-- **Testing:** Vitest
+This lottery uses **Compact zero-knowledge smart contracts** on Midnight Network so users can buy tickets and claim prizes with **full privacy**. On-chain observers can monitor the total pot and draw results, but can **never link individual ticket commitments** to real-world wallet identities or unrevealed ticket secrets.
 
-## Local Development
+---
+
+## 📋 Smart Contract Deployment
+
+| Field | Value |
+|---|---|
+| **Network** | Midnight Preview |
+| **Contract ID** | `0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87` |
+| **Deployer Address** | `mn_preview_15c3a9399b73b87d0bc29fd38151d64634751fe` |
+| **Explorer** | [Midnight Preview Explorer](https://explorer.preview.midnight.network/) |
+
+---
+
+## ✨ Key Features
+
+### Privacy-Preserving Ticket Entries
+Participants deposit entry fees into the pool while proving ownership via a **ZK witness commitment**. Private ticket salts are generated at runtime and **never revealed on-chain**.
+
+### Fair Verifiable Random Selection
+Incorporates **verifiable seed disclosure** to select winning ticket indices objectively using VRF-based entropy.
+
+### Zero-Knowledge Prize Claims
+Winners submit a ZK proof demonstrating that their ticket witness matches the winning commitment **without exposing non-winning participant identities**.
+
+### Modern Production Frontend
+Interactive glassmorphic dark interface with:
+- Live ZK proof generation indicators
+- Real-time indexer sync (12s polling)
+- 1AM Wallet DApp Connector integration
+- Optimistic UI updates with rollback
+- Mobile-responsive design (320px–1920px)
+
+---
+
+## 🏗️ Architecture
+
+```
+midnight11/
+├── contracts/
+│   ├── lottery.compact          # Compact ZK smart contract (3 circuits)
+│   └── lottery.test.ts          # Unit tests for circuit logic
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── LotteryView.tsx       # Core lottery UI
+│   │   │   ├── WalletConnect.tsx     # 1AM Wallet connector
+│   │   │   ├── MetaMaskWallet.tsx    # MetaMask fallback
+│   │   │   ├── ErrorBoundary.tsx     # Global error boundary
+│   │   │   ├── OnboardingModal.tsx   # 5-step first-time user onboarding
+│   │   │   └── FeedbackWidget.tsx    # Floating feedback collection
+│   │   ├── hooks/
+│   │   │   └── useMidnight.ts        # DApp Connector hook
+│   │   ├── lib/
+│   │   │   ├── analytics.ts          # Plausible event tracking
+│   │   │   └── sentry.ts             # Sentry error monitoring
+│   │   ├── contract.ts              # Compact contract interface
+│   │   ├── indexer.ts               # GraphQL indexer client
+│   │   ├── App.tsx                  # Root component
+│   │   └── main.tsx                 # Entry point
+│   ├── .env.example                 # Environment variable template
+│   ├── index.html                   # HTML entry with SEO meta tags
+│   └── vite.config.ts               # Vite configuration
+├── src/
+│   └── deploy.ts                    # Contract deployment script
+├── package.json
+└── README.md
+```
+
+---
+
+## 🔒 Smart Contract Circuits
+
+The Compact smart contract (`contracts/lottery.compact`) implements 3 zero-knowledge circuits:
+
+| Circuit | Purpose | Privacy Guarantee |
+|---|---|---|
+| `deposit_entry` | Buy a ticket by depositing 1 tNIGHT | Salt is hashed into a commitment — never revealed on-chain |
+| `draw_winner` | Select winner using VRF seed | Winner index is deterministic but unlinkable to identity |
+| `claim_prize` | Claim pot by proving ticket ownership | Proof verifies without revealing which ticket is yours |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Smart Contract** | Compact (`contracts/lottery.compact`) |
+| **Frontend** | React 18, Vite 5, TypeScript |
+| **State Management** | TanStack Query (React Query) |
+| **Wallet** | 1AM Wallet via Midnight DApp Connector API |
+| **Styling** | Custom CSS with glassmorphism design system |
+| **Testing** | Vitest |
+| **Analytics** | Plausible (privacy-first, no cookies) |
+| **Monitoring** | Sentry (error boundaries + crash reporting) |
+| **Deployment** | Vercel / Netlify (frontend) |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js >= 20.x
-- npm / npx
-- Docker Desktop (for optional local devnet stack)
 
-### Step-by-Step Commands
+- **Node.js** ≥ 20.x
+- **npm** / **npx**
+- **1AM Wallet** browser extension (for Midnight Network interaction)
+- Docker Desktop (optional — for local devnet stack)
 
-1. **Install Dependencies:**
-   ```bash
-   npm install
-   npm --prefix frontend install
-   ```
+### Installation
 
-2. **Run Unit Tests (Circuit Logic, State Transitions & Privacy Isolation):**
-   ```bash
-   npm test
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/payalbabar/midnight.git
+cd midnight11
 
-3. **Check TypeScript Compilation:**
-   ```bash
-   npm run compile
-   ```
+# Install root dependencies
+npm install
 
-4. **Deploy Smart Contract to Midnight Preview Network:**
-   ```bash
-   npm run deploy -- --network preview
-   ```
+# Install frontend dependencies
+npm --prefix frontend install
 
-5. **Start Frontend Development Server:**
-   ```bash
-   npm run frontend:dev
-   ```
+# Copy environment config
+cp frontend/.env.example frontend/.env.local
+```
 
-6. **Build Production Frontend Bundle:**
-   ```bash
-   npm run frontend:build
-   ```
+### Configuration
+
+Edit `frontend/.env.local` with your values:
+
+```env
+# Required
+VITE_CONTRACT_ADDRESS=0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87
+VITE_INDEXER_URL=https://indexer.preview.midnight.network
+VITE_NETWORK=preview
+
+# Optional — Analytics & Monitoring
+VITE_SENTRY_DSN=https://your-dsn@sentry.io/project-id
+VITE_ANALYTICS_ENABLED=true
+VITE_ANALYTICS_DOMAIN=yourdomain.com
+```
+
+### Development
+
+```bash
+# Run unit tests (circuit logic, state transitions, privacy isolation)
+npm test
+
+# Check TypeScript compilation
+npm run compile
+
+# Start frontend dev server
+npm run frontend:dev
+```
+
+### Production Build
+
+```bash
+# Build optimized frontend bundle
+npm run frontend:build
+```
+
+---
+
+## 📊 Production Features
+
+### Analytics (Plausible)
+Privacy-first analytics tracking — no cookies, GDPR compliant. Tracks:
+- Wallet connections/disconnections
+- Lottery ticket purchases
+- Draw and claim events
+- Onboarding flow completion
+
+### Monitoring (Sentry)
+Real-time error tracking with:
+- Automatic crash reporting
+- React Error Boundary integration
+- Sensitive data scrubbing (no wallet keys, no PII)
+
+### User Onboarding
+5-step interactive onboarding modal for first-time users covering:
+1. Welcome & ZK privacy concept
+2. How the lottery works
+3. Why zero-knowledge matters
+4. Wallet setup instructions
+5. Ready to play
+
+### Feedback Collection
+Floating feedback widget with:
+- Star rating (1–5)
+- Category selection (Bug, UX, Feature Request, General)
+- Optional comment field
+- Configurable submission endpoint
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Expected output:
+# ✓ deposit_entry creates valid ticket with commitment
+# ✓ draw_winner selects a valid winning index
+# ✓ claim_prize transfers pot to winner
+# ✓ privacy: ticket salts are never stored in public state
+```
+
+---
+
+## 🔮 Future Scope
+
+- **Multi-Round Automation:** Scheduled rollover for unclaimed prize pots
+- **Shielded Token Pool:** Integration with Midnight shielded tokens for untraceable payouts
+- **Cross-Chain VRF Oracles:** Chainlink VRF integration for decentralized entropy
+- **Governance Module:** Community voting on lottery parameters
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🙏 Acknowledgments
+
+Built for **INTO the Midnight — SPPU Bootcamp** (Rise In)
+
+- [Midnight Network](https://midnight.network/) — Privacy blockchain platform
+- [Compact Language](https://docs.midnight.network/) — Zero-knowledge smart contract language
+- [1AM Wallet](https://midnight.network/) — Official Midnight DApp Connector wallet
