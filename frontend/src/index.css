@@ -188,3 +188,97 @@ body {
 .input-field:focus {
   border-color: var(--accent-purple);
 }
+
+/* ─── Spinner animation (used by RefreshCw and Cpu icons) ─── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ─── Mobile: 480px breakpoint ─── */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 1rem 0.875rem;
+  }
+
+  .header-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .header-nav > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .brand-title {
+    font-size: 1.1rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  .btn {
+    padding: 0.65rem 1.1rem;
+    font-size: 0.9rem;
+  }
+
+  .grid-2 {
+    gap: 1.25rem;
+  }
+
+  /* Hero prize amount — shrink on small screens */
+  .prize-amount {
+    font-size: 2.25rem !important;
+  }
+}
+
+/* ─── Mobile: 380px breakpoint (very small phones) ─── */
+@media (max-width: 380px) {
+  .app-container {
+    padding: 0.75rem;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    border-radius: 10px;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.65rem;
+  }
+}
+
+/* ─── Utility: truncate long wallet addresses on mobile ─── */
+.address-truncate {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .address-truncate {
+    max-width: 100px;
+  }
+}
+
