@@ -3,6 +3,7 @@ import { Ticket, Trophy, Lock, Sparkles, RefreshCw, CheckCircle2, ShieldCheck, C
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LotteryContract, computeCommitment } from '../contract';
 import { fetchLiveIndexerState, ContractIndexerState } from '../indexer';
+import { trackEvent } from '../lib/analytics';
 
 interface LotteryViewProps {
   isConnected: boolean;
@@ -44,6 +45,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
   // Real Action 1: Buy Ticket
   const buyTicketMutation = useMutation({
     mutationFn: async () => {
+      trackEvent('lottery_entry_started');
       setProvingAction('Generating ZK Ticket Salt Proof via 1AM Wallet...');
       
       const array = new Uint8Array(32);
@@ -81,12 +83,14 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
       return { previousState };
     },
     onSuccess: (data) => {
+      trackEvent('lottery_entry_confirmed', { ticket_count: 1 });
       setLastTxId(data.txId);
       setUserHasTicket(true);
       setUserCommitment(data.commitment);
       queryClient.invalidateQueries({ queryKey: ['indexerState', contractAddress] });
     },
     onError: (err: any, variables, context) => {
+      trackEvent('transaction_failed', { error_type: err.message?.substring(0, 80) || 'unknown' });
       if (context?.previousState) {
         queryClient.setQueryData(['indexerState', contractAddress], context.previousState);
       }
@@ -116,10 +120,12 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
       return txId;
     },
     onSuccess: (txId) => {
+      trackEvent('draw_winner_confirmed');
       setLastTxId(txId);
       queryClient.invalidateQueries({ queryKey: ['indexerState', contractAddress] });
     },
     onError: (err: any) => {
+      trackEvent('transaction_failed', { error_type: err.message?.substring(0, 80) || 'unknown' });
       alert(`Draw Winner Error: ${err.message}`);
     },
     onSettled: () => {
@@ -151,10 +157,12 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
       return { previousState };
     },
     onSuccess: () => {
+      trackEvent('claim_prize_confirmed');
       alert('🎉 Prize Claim Verified and Transferred via Zero-Knowledge Witness Proof!');
       queryClient.invalidateQueries({ queryKey: ['indexerState', contractAddress] });
     },
     onError: (err: any, variables, context) => {
+      trackEvent('transaction_failed', { error_type: err.message?.substring(0, 80) || 'unknown' });
       if (context?.previousState) {
         queryClient.setQueryData(['indexerState', contractAddress], context.previousState);
       }

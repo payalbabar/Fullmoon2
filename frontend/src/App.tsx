@@ -4,16 +4,29 @@ import { useMidnight } from './hooks/useMidnight';
 import { WalletConnect } from './components/WalletConnect';
 import { MetaMaskWallet } from './components/MetaMaskWallet';
 import { LotteryView } from './components/LotteryView';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { OnboardingModal } from './components/OnboardingModal';
+import { FeedbackWidget } from './components/FeedbackWidget';
 import { Shield } from 'lucide-react';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      staleTime: 10000,
+    },
+  },
+});
 
-export function App() {
+function AppInner() {
   const midnight = useMidnight();
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="app-container">
+        {/* First-time user onboarding — auto-shows, skippable */}
+        <OnboardingModal />
+
         {/* Header */}
         <header className="header-nav">
           <div className="brand">
@@ -54,7 +67,18 @@ export function App() {
           <p style={{ marginTop: '0.4rem', fontSize: '0.8rem' }}>Connected via 1AM Wallet DApp Connector & Live Midnight Preview Indexer</p>
         </footer>
       </div>
+
+      {/* Floating feedback widget — always accessible */}
+      <FeedbackWidget />
     </QueryClientProvider>
+  );
+}
+
+export function App() {
+  return (
+    <ErrorBoundary>
+      <AppInner />
+    </ErrorBoundary>
   );
 }
 
