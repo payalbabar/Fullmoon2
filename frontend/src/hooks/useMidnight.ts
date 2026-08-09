@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { trackEvent } from '../lib/analytics';
 
 export interface WalletInfo {
   id: string;
@@ -65,6 +66,7 @@ export function useMidnight() {
 
   const connectWallet = useCallback(async (preferredWalletId?: string) => {
     setWalletState((prev) => ({ ...prev, isConnecting: true, error: null }));
+    trackEvent('wallet_connect_started');
 
     try {
       if (!window.midnight || Object.keys(window.midnight).length === 0) {
@@ -129,18 +131,21 @@ export function useMidnight() {
         balance = BigInt(state.balance || state.unshieldedBalance || 0);
       }
 
+      trackEvent('wallet_connected', { wallet_name: selectedName, network: connectedNetwork });
+
       setWalletState((prev) => ({
         ...prev,
         isConnected: true,
         walletName: selectedName,
-        address: address || 'mn_preview_12a2217f7f0253b8b621fca5d4d5a21cda10a6f',
-        balance: balance || 50000000n,
+        address: address || null,
+        balance: balance,
         network: connectedNetwork,
         isConnecting: false,
         error: null,
         api,
       }));
     } catch (err: any) {
+      trackEvent('wallet_connection_failed', { error_type: err.message?.substring(0, 80) || 'unknown' });
       setWalletState((prev) => ({
         ...prev,
         isConnected: false,
@@ -155,6 +160,7 @@ export function useMidnight() {
   }, [targetNetwork]);
 
   const disconnectWallet = useCallback(() => {
+    trackEvent('wallet_disconnected');
     setWalletState((prev) => ({
       ...prev,
       isConnected: false,
