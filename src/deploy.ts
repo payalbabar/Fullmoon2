@@ -29,7 +29,7 @@ export async function deployContract(networkName: string = 'preview'): Promise<s
   console.log(`[Deploying] Initial ticket price: 1,000,000 tNIGHT micro-units`);
 
   console.log(`\n====================================================`);
-  console.log(`SUCCESSFULLY DEPLOYED TO MIDNIGHT PREVIEW NETWORK!`);
+  console.log(`SUCCESSFULLY DEPLOYED TO MIDNIGHT ${networkName.toUpperCase()} NETWORK!`);
   console.log(`Contract ID / Address: ${contractAddress}`);
   console.log(`====================================================\n`);
 
@@ -37,6 +37,6 @@ export async function deployContract(networkName: string = 'preview'): Promise<s
 }
 
 const argNetwork = process.argv.find((arg) => arg.startsWith('--network='))?.split('=')[1] ||
-  (process.argv.includes('--network') ? process.argv[process.argv.indexOf('--network') + 1] : 'preview');
+  (process.argv.includes('--network') ? process.argv[process.argv.indexOf('--network') + 1] : 'preprod');
 
 deployContract(argNetwork).catch(console.error);

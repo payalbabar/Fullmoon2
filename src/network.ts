@@ -1,5 +1,5 @@
 export interface NetworkConfig {
-  name: 'preview' | 'undeployed' | 'local';
+  name: 'preview' | 'preprod' | 'undeployed' | 'local';
   nodeUrl: string;
   indexerUrl: string;
   proofServerUrl: string;
@@ -14,6 +14,14 @@ export const PREVIEW_NETWORK_CONFIG: NetworkConfig = {
   faucetUrl: 'https://faucet.preview.midnight.network',
 };
 
+export const PREPROD_NETWORK_CONFIG: NetworkConfig = {
+  name: 'preprod',
+  nodeUrl: 'https://rpc.preprod.midnight.network',
+  indexerUrl: 'https://indexer.preprod.midnight.network',
+  proofServerUrl: 'https://proof.preprod.midnight.network',
+  faucetUrl: 'https://faucet.preprod.midnight.network',
+};
+
 export const LOCAL_NETWORK_CONFIG: NetworkConfig = {
   name: 'local',
   nodeUrl: 'http://localhost:9944',
@@ -25,6 +33,9 @@ export const LOCAL_NETWORK_CONFIG: NetworkConfig = {
 export function getNetworkConfig(networkName: string = process.env.MIDNIGHT_NETWORK || 'preview'): NetworkConfig {
   if (networkName === 'local') {
     return LOCAL_NETWORK_CONFIG;
+  }
+  if (networkName === 'preprod') {
+    return PREPROD_NETWORK_CONFIG;
   }
   return PREVIEW_NETWORK_CONFIG;
 }
