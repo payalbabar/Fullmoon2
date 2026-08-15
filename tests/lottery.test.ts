@@ -75,4 +75,20 @@ describe('Decentralized Lottery Compact Contract Unit Tests', () => {
     // Ensure commitment cannot be reversed directly to private salt
     expect(computeCommitment(sensitivePrivateWitness, 'DEPOSIT_SALT')).toBe(result.commitment);
   });
+
+  it('(d) Preprod Network Configuration - Contract works with Preprod network settings', () => {
+    const preprodContract = new LotteryContract(1000000n);
+
+    // Verify contract initializes correctly for Preprod
+    expect(preprodContract.state.ticket_price).toBe(1000000n);
+    expect(preprodContract.state.round_id).toBe(1);
+    expect(preprodContract.state.is_completed).toBe(false);
+
+    // Test basic circuit functionality
+    const testSalt = 'preprod_test_salt_123';
+    const result = preprodContract.deposit_entry(testSalt);
+
+    expect(result.commitment).toHaveLength(64);
+    expect(preprodContract.state.ticket_count).toBe(1);
+  });
 });

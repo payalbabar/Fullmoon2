@@ -158,14 +158,11 @@ VITE_ANALYTICS_DOMAIN=yourdomain.com
 ### Development
 
 ```bash
-# Run unit tests (circuit logic, state transitions, privacy isolation)
-npm test
-
-# Check TypeScript compilation
-npm run compile
-
 # Start frontend dev server
-npm run frontend:dev
+npm run frontend
+
+# Start backend dev server (if applicable)
+npm run dev
 ```
 
 ### Production Build
@@ -174,6 +171,77 @@ npm run frontend:dev
 # Build optimized frontend bundle
 npm run frontend:build
 ```
+
+---
+
+## Deployment Guide
+
+### Frontend Deployment (Vercel)
+
+1. **Install Vercel CLI**
+```bash
+npm install -g vercel
+vercel login
+```
+
+2. **Deploy from frontend directory**
+```bash
+cd frontend
+vercel
+```
+
+3. **Set Environment Variables in Vercel Dashboard**
+- `VITE_CONTRACT_ADDRESS`: Your actual Preprod contract address
+- `VITE_INDEXER_URL`: `https://indexer.preprod.midnight.network`
+- `VITE_NETWORK`: `preprod`
+
+4. **Production Deployment**
+```bash
+vercel --prod
+```
+
+### Contract Deployment to Preprod
+
+**Important:** The current deployment script simulates deployment. For actual Preprod deployment:
+
+1. **Set up Midnight Wallet**
+```bash
+# Create wallet with Midnight CLI
+midnight wallet create
+```
+
+2. **Fund Wallet**
+- Visit Preprod faucet: https://faucet.preprod.midnight.network
+- Request testnet tokens
+
+3. **Deploy Contract**
+```bash
+# Use actual Midnight deployment tools
+npm run deploy -- --network=preprod
+```
+
+4. **Verify on Explorer**
+- Check: https://explorer.preprod.midnight.network/
+- Search for your contract address
+
+5. **Update Configuration**
+- Replace contract address in `frontend/.env.example`
+- Update README with actual contract address
+- Commit and push changes
+
+### Demo Video Requirements
+
+**Required content (under 2 minutes):**
+1. Show Lace Wallet connection
+2. Demonstrate circuit call (buy ticket or draw winner)
+3. Show privacy behavior (ZK proof generation)
+4. Display successful transaction
+
+**Recording tips:**
+- Use screen recording software (OBS, Loom, etc.)
+- Ensure wallet extension is visible
+- Show loading states and privacy badges
+- Keep under 2 minutes
 
 ---
 
