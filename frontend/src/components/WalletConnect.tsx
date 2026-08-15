@@ -49,7 +49,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
               }}
             >
               <Zap size={14} color="#00f2fe" />
-              <span style={{ fontWeight: 600, color: '#ffffff' }}>{walletName || '1AM Wallet'}</span>
+              <span style={{ fontWeight: 600, color: '#ffffff' }}>{walletName || 'Lace Wallet'}</span>
               <span className="font-mono" style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
                 ({address?.substring(0, 10)}...{address?.substring(address.length - 4)})
               </span>
@@ -62,7 +62,7 @@ export const WalletConnect: React.FC<WalletConnectProps> = ({
         ) : (
           <button onClick={() => onConnect()} disabled={isConnecting} className="btn btn-primary" style={{ gap: '0.6rem' }}>
             {isConnecting ? <Loader2 size={16} className="spin" /> : <Wallet size={16} />}
-            {isConnecting ? 'Connecting 1AM Wallet...' : 'Connect 1AM Wallet'}
+            {isConnecting ? 'Connecting Lace Wallet...' : 'Connect Lace Wallet'}
           </button>
         )}
       </div>

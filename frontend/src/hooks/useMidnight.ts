@@ -26,7 +26,7 @@ declare global {
 }
 
 export function useMidnight() {
-  const targetNetwork = import.meta.env.VITE_NETWORK || 'preview';
+  const targetNetwork = import.meta.env.VITE_NETWORK || 'preprod';
 
   const [walletState, setWalletState] = useState<MidnightWalletState>({
     isConnected: false,
@@ -40,16 +40,16 @@ export function useMidnight() {
     api: null,
   });
 
-  // Detect installed Midnight DApp Connector wallets (e.g., 1AM Wallet, Midnight Lace)
+  // Detect installed Midnight DApp Connector wallets (e.g., Lace Wallet, 1AM Wallet)
   const detectWallets = useCallback(() => {
     if (!window.midnight) return [];
     const entries = Object.entries(window.midnight);
     return entries.map(([key, provider]) => {
       let displayName = provider.name || key;
-      if (key.toLowerCase().includes('1am') || displayName.toLowerCase().includes('1am')) {
+      if (key.toLowerCase().includes('lace') || displayName.toLowerCase().includes('lace')) {
+        displayName = 'Lace Wallet';
+      } else if (key.toLowerCase().includes('1am') || displayName.toLowerCase().includes('1am')) {
         displayName = '1AM Wallet';
-      } else if (key.toLowerCase().includes('lace') || displayName.toLowerCase().includes('lace')) {
-        displayName = 'Midnight Lace Wallet';
       }
       return { id: key, name: displayName };
     });
@@ -70,19 +70,19 @@ export function useMidnight() {
 
     try {
       if (!window.midnight || Object.keys(window.midnight).length === 0) {
-        throw new Error('No Midnight wallet detected. Please install 1AM Wallet extension in your browser to interact with live transactions.');
+        throw new Error('No Midnight wallet detected. Please install Lace Wallet extension in your browser to interact with live transactions.');
       }
 
-      // Discover connected wallet provider
+      // Discover connected wallet provider - prioritize Lace wallet
       const keys = Object.keys(window.midnight);
-      const targetKey = preferredWalletId || keys.find((k) => k.toLowerCase().includes('1am')) || keys[0];
+      const targetKey = preferredWalletId || keys.find((k) => k.toLowerCase().includes('lace')) || keys.find((k) => k.toLowerCase().includes('1am')) || keys[0];
       const activeWalletProvider = window.midnight[targetKey];
 
       if (!activeWalletProvider) {
         throw new Error('Selected wallet provider is not available.');
       }
 
-      const selectedName = activeWalletProvider.name || (targetKey.toLowerCase().includes('1am') ? '1AM Wallet' : 'Midnight Wallet');
+      const selectedName = activeWalletProvider.name || (targetKey.toLowerCase().includes('lace') ? 'Lace Wallet' : targetKey.toLowerCase().includes('1am') ? '1AM Wallet' : 'Midnight Wallet');
 
       let api: any;
       let address = '';
@@ -153,7 +153,7 @@ export function useMidnight() {
         address: null,
         balance: 0n,
         isConnecting: false,
-        error: err.message || 'Failed to connect to 1AM Wallet',
+        error: err.message || 'Failed to connect to Lace Wallet',
         api: null,
       }));
     }
