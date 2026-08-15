@@ -22,8 +22,8 @@ This lottery uses **Compact zero-knowledge smart contracts** on Midnight Network
 | Field | Value |
 |---|---|
 | **Network** | Midnight Preprod |
-| **Contract ID** | `0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87` |
-| **Deployer Address** | `mn_preprod_15c3a9399b73b87d0bc29fd38151d64634751fe` |
+| **Contract ID** | `0x02003b516506eba484031a1388f7631708d066d6c23cb8d36f8c88cfb191` |
+| **Deployer Address** | `mn_preview_1cead884688b14f4a0bd0741b8554ee4e79e0fb` |
 | **Explorer** | [Midnight Preprod Explorer](https://explorer.preprod.midnight.network/) |
 
 ---
@@ -145,7 +145,7 @@ Edit `frontend/.env.local` with your values:
 
 ```env
 # Required
-VITE_CONTRACT_ADDRESS=0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87
+VITE_CONTRACT_ADDRESS=0x02003b516506eba484031a1388f7631708d066d6c23cb8d36f8c88cfb191
 VITE_INDEXER_URL=https://indexer.preprod.midnight.network
 VITE_NETWORK=preprod
 
