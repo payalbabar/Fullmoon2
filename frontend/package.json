@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "@sentry/react": "^10.69.0",
     "@tanstack/react-query": "^5.101.4",
     "decentralized-lottery": "file:..",
     "ethers": "^6.17.0",
