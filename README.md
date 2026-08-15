@@ -21,10 +21,10 @@ This lottery uses **Compact zero-knowledge smart contracts** on Midnight Network
 
 | Field | Value |
 |---|---|
-| **Network** | Midnight Preview |
+| **Network** | Midnight Preprod |
 | **Contract ID** | `0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87` |
-| **Deployer Address** | `mn_preview_15c3a9399b73b87d0bc29fd38151d64634751fe` |
-| **Explorer** | [Midnight Preview Explorer](https://explorer.preview.midnight.network/) |
+| **Deployer Address** | `mn_preprod_15c3a9399b73b87d0bc29fd38151d64634751fe` |
+| **Explorer** | [Midnight Preprod Explorer](https://explorer.preprod.midnight.network/) |
 
 ---
 
@@ -43,7 +43,7 @@ Winners submit a ZK proof demonstrating that their ticket witness matches the wi
 Interactive glassmorphic dark interface with:
 - Live ZK proof generation indicators
 - Real-time indexer sync (12s polling)
-- 1AM Wallet DApp Connector integration
+- Lace Wallet DApp Connector integration
 - Optimistic UI updates with rollback
 - Mobile-responsive design (320px–1920px)
 
@@ -60,7 +60,7 @@ midnight11/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── LotteryView.tsx       # Core lottery UI
-│   │   │   ├── WalletConnect.tsx     # 1AM Wallet connector
+│   │   │   ├── WalletConnect.tsx     # Lace Wallet connector
 │   │   │   ├── MetaMaskWallet.tsx    # MetaMask fallback
 │   │   │   ├── ErrorBoundary.tsx     # Global error boundary
 │   │   │   ├── OnboardingModal.tsx   # 5-step first-time user onboarding
@@ -104,7 +104,7 @@ The Compact smart contract (`contracts/lottery.compact`) implements 3 zero-knowl
 | **Smart Contract** | Compact (`contracts/lottery.compact`) |
 | **Frontend** | React 18, Vite 5, TypeScript |
 | **State Management** | TanStack Query (React Query) |
-| **Wallet** | 1AM Wallet via Midnight DApp Connector API |
+| **Wallet** | Lace Wallet via Midnight DApp Connector API |
 | **Styling** | Custom CSS with glassmorphism design system |
 | **Testing** | Vitest |
 | **Analytics** | Plausible (privacy-first, no cookies) |
@@ -119,7 +119,7 @@ The Compact smart contract (`contracts/lottery.compact`) implements 3 zero-knowl
 
 - **Node.js** ≥ 20.x
 - **npm** / **npx**
-- **1AM Wallet** browser extension (for Midnight Network interaction)
+- **Lace Wallet** browser extension (for Midnight Network interaction)
 - Docker Desktop (optional — for local devnet stack)
 
 ### Installation
@@ -146,8 +146,8 @@ Edit `frontend/.env.local` with your values:
 ```env
 # Required
 VITE_CONTRACT_ADDRESS=0x0200f15cc7c3900333c9fa3efaa9cc306b2bdcb7bf83b5119e32c8944d87
-VITE_INDEXER_URL=https://indexer.preview.midnight.network
-VITE_NETWORK=preview
+VITE_INDEXER_URL=https://indexer.preprod.midnight.network
+VITE_NETWORK=preprod
 
 # Optional — Analytics & Monitoring
 VITE_SENTRY_DSN=https://your-dsn@sentry.io/project-id
@@ -245,4 +245,4 @@ Built for **INTO the Midnight — SPPU Bootcamp** (Rise In)
 
 - [Midnight Network](https://midnight.network/) — Privacy blockchain platform
 - [Compact Language](https://docs.midnight.network/) — Zero-knowledge smart contract language
-- [1AM Wallet](https://midnight.network/) — Official Midnight DApp Connector wallet
+- [Lace Wallet](https://midnight.network/) — Official Midnight DApp Connector wallet
