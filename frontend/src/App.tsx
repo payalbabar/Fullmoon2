@@ -35,7 +35,7 @@ function AppInner() {
             </div>
             <div>
               <div className="brand-title">Decentralized Lottery</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', letterSpacing: '0.05em' }}>1AM WALLET + LIVE MIDNIGHT INDEXER</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', letterSpacing: '0.05em' }}>LACE WALLET + LIVE MIDNIGHT INDEXER</div>
             </div>
           </div>
 
@@ -64,7 +64,7 @@ function AppInner() {
         {/* Footer */}
         <footer style={{ marginTop: '4rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
           <p>Built for <strong style={{ color: '#ffffff' }}>INTO the Midnight — SPPU Bootcamp</strong> (Rise In)</p>
-          <p style={{ marginTop: '0.4rem', fontSize: '0.8rem' }}>Connected via 1AM Wallet DApp Connector & Live Midnight Preview Indexer</p>
+          <p style={{ marginTop: '0.4rem', fontSize: '0.8rem' }}>Connected via Lace Wallet DApp Connector & Live Midnight Preprod Indexer</p>
         </footer>
       </div>
 

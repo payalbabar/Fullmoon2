@@ -13,7 +13,7 @@ interface LotteryViewProps {
 
 export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, walletApi }) => {
   const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS || '0x0200325b543c46b160e2802c323d868144e6985589643dc64f791a2fa8c7';
-  const indexerUrl = import.meta.env.VITE_INDEXER_URL || 'https://indexer.preview.midnight.network';
+  const indexerUrl = import.meta.env.VITE_INDEXER_URL || 'https://indexer.preprod.midnight.network';
   const queryClient = useQueryClient();
 
   const [contract] = useState(() => new LotteryContract(1000000n));
@@ -46,8 +46,8 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
   const buyTicketMutation = useMutation({
     mutationFn: async () => {
       trackEvent('lottery_entry_started');
-      setProvingAction('Generating ZK Ticket Salt Proof via 1AM Wallet...');
-      
+      setProvingAction('Generating ZK Ticket Salt Proof via Lace Wallet...');
+
       const array = new Uint8Array(32);
       crypto.getRandomValues(array);
       const runtimePrivateWitness = Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
@@ -94,7 +94,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
       if (context?.previousState) {
         queryClient.setQueryData(['indexerState', contractAddress], context.previousState);
       }
-      alert(`1AM Wallet Proof Submission Error: ${err.message}`);
+      alert(`Lace Wallet Proof Submission Error: ${err.message}`);
     },
     onSettled: () => {
       setProvingAction(null);
@@ -104,8 +104,8 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
   // Real Action 2: Draw Winner
   const drawWinnerMutation = useMutation({
     mutationFn: async () => {
-      setProvingAction('Submitting VRF Entropy Commitment via 1AM Wallet...');
-      
+      setProvingAction('Submitting VRF Entropy Commitment via Lace Wallet...');
+
       const vrfArray = new Uint8Array(32);
       crypto.getRandomValues(vrfArray);
       const vrfSeed = Array.from(vrfArray, (b) => b.toString(16).padStart(2, '0')).join('');
@@ -137,8 +137,8 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
   const claimPrizeMutation = useMutation({
     mutationFn: async () => {
       if (!userCommitment) throw new Error("No ticket commitment found");
-      setProvingAction('Verifying ZK Ticket Entitlement via 1AM Wallet...');
-      
+      setProvingAction('Verifying ZK Ticket Entitlement via Lace Wallet...');
+
       if (walletApi && typeof walletApi.submitTx === 'function') {
         await walletApi.submitTx({ circuit: 'claim_prize', commitment: userCommitment });
       }
@@ -202,7 +202,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
           </div>
           <h1 style={{ fontSize: '2.2rem', fontWeight: 700 }}>Midnight Privacy Lottery</h1>
           <p style={{ color: 'var(--text-muted)', marginTop: '0.3rem' }}>
-            Live decentralized ZK pool on Midnight Network. Real-time indexer sync & 1AM Wallet transaction proving.
+            Live decentralized ZK pool on Midnight Network. Real-time indexer sync & Lace Wallet transaction proving.
           </p>
         </div>
 
@@ -261,7 +261,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
               style={{ width: '100%', padding: '1rem', fontSize: '1.1rem' }}
             >
               <Ticket size={20} />
-              Buy Ticket via 1AM Wallet (1 tNIGHT)
+              Buy Ticket via Lace Wallet (1 tNIGHT)
             </button>
             <div style={{ textAlign: 'center', marginTop: '0.6rem' }}>
               <span className="badge badge-privacy">
@@ -321,7 +321,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
                 style={{ width: '100%', padding: '1rem', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
               >
                 <Trophy size={18} />
-                Claim Winner Prize via 1AM Wallet
+                Claim Winner Prize via Lace Wallet
               </button>
             ) : (
               <button
@@ -377,7 +377,7 @@ export const LotteryView: React.FC<LotteryViewProps> = ({ isConnected, address, 
         <div className="card" style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.9rem', fontWeight: 600 }}>
             <CheckCircle2 size={16} />
-            Latest Transaction Confirmed on Preview Network
+            Latest Transaction Confirmed on Preprod Network
           </div>
           <div className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
             Tx ID: {lastTxId}
