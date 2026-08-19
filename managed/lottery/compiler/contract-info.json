@@ -1,22 +1,15 @@
 {
-  "compiler-version": "0.31.1",
+  "compiler-version": "0.31.0",
   "language-version": "0.23.0",
   "runtime-version": "0.16.0",
   "circuits": [
     {
-      "name": "commitment",
-      "pure": true,
-      "proof": false,
+      "name": "deposit_entry",
+      "pure": false,
+      "proof": true,
       "arguments": [
         {
-          "name": "ticket",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "salt",
+          "name": "secret_salt",
           "type": {
             "type-name": "Bytes",
             "length": 32
@@ -29,101 +22,45 @@
       }
     },
     {
-      "name": "enter",
+      "name": "draw_winner",
       "pure": false,
       "proof": true,
       "arguments": [
         {
-          "name": "ticket",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "salt",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        }
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "draw",
-      "pure": false,
-      "proof": true,
-      "arguments": [
-        {
-          "name": "randomValue",
+          "name": "winning_ticket",
           "type": {
             "type-name": "Uint",
             "maxval": 4294967295
           }
-        }
-      ],
-      "result-type": {
-        "type-name": "Uint",
-        "maxval": 4294967295
-      }
-    },
-    {
-      "name": "claim",
-      "pure": false,
-      "proof": true,
-      "arguments": [
+        },
         {
-          "name": "ticket",
+          "name": "vrf_reveal",
           "type": {
             "type-name": "Bytes",
             "length": 32
           }
-        },
+        }
+      ],
+      "result-type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "claim_prize",
+      "pure": false,
+      "proof": true,
+      "arguments": [
         {
-          "name": "salt",
+          "name": "secret_salt",
           "type": {
             "type-name": "Bytes",
             "length": 32
           }
-        },
-        {
-          "name": "userAddr",
-          "type": {
-            "type-name": "Struct",
-            "name": "UserAddress",
-            "elements": [
-              {
-                "name": "bytes",
-                "type": {
-                  "type-name": "Bytes",
-                  "length": 32
-                }
-              }
-            ]
-          }
         }
       ],
       "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
-      }
-    },
-    {
-      "name": "newRound",
-      "pure": false,
-      "proof": true,
-      "arguments": [
-      ],
-      "result-type": {
-        "type-name": "Tuple",
-        "types": [
-        ]
+        "type-name": "Boolean"
       }
     }
   ],
@@ -133,23 +70,8 @@
   ],
   "ledger": [
     {
-      "name": "roundStatus",
+      "name": "round_id",
       "index": 0,
-      "exported": true,
-      "storage": "Cell",
-      "type": {
-        "type-name": "Enum",
-        "name": "RoundState",
-        "elements": [
-          "OPEN",
-          "DRAWN",
-          "CLAIMED"
-        ]
-      }
-    },
-    {
-      "name": "entrants",
-      "index": 1,
       "exported": true,
       "storage": "Cell",
       "type": {
@@ -158,8 +80,8 @@
       }
     },
     {
-      "name": "pool",
-      "index": 2,
+      "name": "pot_balance",
+      "index": 1,
       "exported": true,
       "storage": "Cell",
       "type": {
@@ -168,7 +90,17 @@
       }
     },
     {
-      "name": "entryFee",
+      "name": "ticket_count",
+      "index": 2,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "ticket_price",
       "index": 3,
       "exported": true,
       "storage": "Cell",
@@ -178,61 +110,32 @@
       }
     },
     {
-      "name": "entries",
+      "name": "winning_index",
       "index": 4,
       "exported": true,
-      "storage": "Map",
-      "key": {
+      "storage": "Cell",
+      "type": {
         "type-name": "Uint",
         "maxval": 4294967295
-      },
-      "value": {
+      }
+    },
+    {
+      "name": "winning_commitment",
+      "index": 5,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
         "type-name": "Bytes",
         "length": 32
       }
     },
     {
-      "name": "winningIndex",
-      "index": 5,
-      "exported": true,
-      "storage": "Cell",
-      "type": {
-        "type-name": "Uint",
-        "maxval": 4294967295
-      }
-    },
-    {
-      "name": "winner",
+      "name": "is_completed",
       "index": 6,
       "exported": true,
       "storage": "Cell",
       "type": {
-        "type-name": "Struct",
-        "name": "Maybe",
-        "elements": [
-          {
-            "name": "is_some",
-            "type": {
-              "type-name": "Boolean"
-            }
-          },
-          {
-            "name": "value",
-            "type": {
-              "type-name": "Struct",
-              "name": "UserAddress",
-              "elements": [
-                {
-                  "name": "bytes",
-                  "type": {
-                    "type-name": "Bytes",
-                    "length": 32
-                  }
-                }
-              ]
-            }
-          }
-        ]
+        "type-name": "Boolean"
       }
     }
   ]

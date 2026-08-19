@@ -23,8 +23,39 @@ This lottery uses **Compact zero-knowledge smart contracts** on Midnight Network
 |---|---|
 | **Network** | Midnight Preprod |
 | **Contract ID** | `0x02003b516506eba484031a1388f7631708d066d6c23cb8d36f8c88cfb191` |
-| **Deployer Address** | `mn_preview_1cead884688b14f4a0bd0741b8554ee4e79e0fb` |
+| **Deployer Address** | `mn_preprod_1cead884688b14f4a0bd0741b8554ee4e79e0fb` |
 | **Explorer** | [Midnight Preprod Explorer](https://explorer.preprod.midnight.network/) |
+| **Live Demo** | [midnight-lottery.vercel.app](https://midnight-lottery.vercel.app/) |
+
+---
+
+## 🔏 Privacy Claim
+
+This dApp demonstrates **observable privacy** — something is proved without being shown.
+
+### What is public (anyone can see):
+- The total prize pot balance
+- The number of tickets sold
+- The round status (OPEN / COMPLETED)
+- The winning ticket index after `draw_winner`
+- The VRF domain separator constant (`"WINNING_SEED"`)
+
+### What stays private (never revealed on-chain):
+- **Your `secret_salt`** — the 32-byte private witness generated in your browser. It is used locally to compute the commitment hash, then discarded. It never leaves your device.
+- **Your identity** — the ZK proof for `deposit_entry` only reveals the hash commitment, not who submitted it.
+- **Your ticket** — during `claim_prize`, you prove you know the salt that produced the winning commitment without revealing the salt itself or linking your address to any entry.
+
+### How the ZK proof works:
+1. **Ticket purchase** (`deposit_entry`): Your browser generates a random `secret_salt`. The contract circuit computes `persistentCommit(secret_salt, pad(32,"DEPOSIT_SALT"))` inside the ZK proof. Only the commitment (hash output) is stored on-chain. The salt never appears in any ledger variable or transaction data.
+2. **Draw** (`draw_winner`): The operator discloses a `winning_ticket` index publicly (verifiable fairness). The winning entry's commitment is now the target.
+3. **Claim** (`claim_prize`): The winner re-enters their `secret_salt` into the proof. The circuit recomputes the commitment and asserts it equals the winning one — entirely inside the proof. The verifier sees "proof valid" without learning the salt.
+
+### Observable privacy behavior in the UI:
+- The "🔒 Proved without revealing your input" badge appears on every action button.
+- While proving, a ZK overlay shows: *"Generating Zero-Knowledge Proof"* — the salt is consumed and discarded client-side.
+- The on-chain state only ever stores the commitment hash, visible in the indexer state panel.
+
+
 
 ---
 

@@ -1,27 +1,6 @@
-// ============================================================================
-// CONTRACT: Decentralized Privacy-Preserving Lottery
-// ============================================================================
-// PUBLIC ON-CHAIN LEDGER STATE:
-//   - round_id: Uint<32>            -> Current lottery round number
-//   - pot_balance: Uint<64>         -> Total tokens pooled in current round
-//   - ticket_count: Uint<32>        -> Number of registered entries
-//   - ticket_price: Uint<64>        -> Cost per entry ticket
-//   - winning_index: Uint<32>       -> Selected winning ticket index
-//   - winning_commitment: Bytes<32> -> Commitment hash of the winning ticket
-//   - is_completed: Boolean         -> Round status (false = OPEN, true = COMPLETED)
-//
-// PRIVATE WITNESS INPUTS (ZK PROVED, NEVER REVEALED):
-//   - secret_salt: Bytes<32>        -> Participant private salt/key for entry & claim
-//   - vrf_reveal: Bytes<32>         -> Private random entropy for draw calculation
-//
-// DISCLOSED DATA:
-//   - disclose("DEPOSIT_SALT")      -> Domain separator disclosed for commitment verification
-//   - disclose("WINNING_SEED")      -> Domain separator disclosed for random draw confirmation
-// ============================================================================
+pragma language_version 0.23;
 
-pragma language_version >= 0.14.0;
-
-import CompactLanguage;
+import CompactStandardLibrary;
 
 export ledger round_id: Uint<32>;
 export ledger pot_balance: Uint<64>;
@@ -32,33 +11,33 @@ export ledger winning_commitment: Bytes<32>;
 export ledger is_completed: Boolean;
 
 export circuit deposit_entry(secret_salt: Bytes<32>): Bytes<32> {
-    require(!is_completed, "Lottery round is closed");
-    require(ticket_price > 0, "Invalid ticket price");
+    assert(!is_completed, "Lottery round is closed");
+    assert(ticket_price > 0, "Invalid ticket price");
 
     // Private witness secret_salt is hashed into public commitment
-    const entry_commitment = persistent_hash<Vector<2, Bytes<32>>>([
+    const entry_commitment = persistentCommit<Bytes<32>>(
         secret_salt,
         disclose(pad(32, "DEPOSIT_SALT"))
-    ]);
+    );
 
-    ticket_count = ticket_count + 1;
-    pot_balance = pot_balance + ticket_price;
+    ticket_count = (ticket_count + 1) as Uint<32>;
+    pot_balance = (pot_balance + ticket_price) as Uint<64>;
 
     return entry_commitment;
 }
 
 export circuit draw_winner(winning_ticket: Uint<32>, vrf_reveal: Bytes<32>): Bytes<32> {
-    require(!is_completed, "Round already completed");
-    require(ticket_count > 0, "No tickets purchased");
-    require(winning_ticket < ticket_count, "Winning ticket index out of bounds");
+    assert(!is_completed, "Round already completed");
+    assert(ticket_count > 0, "No tickets purchased");
+    assert(winning_ticket < ticket_count, "Winning ticket index out of bounds");
 
-    winning_index = winning_ticket;
+    winning_index = disclose(winning_ticket);
 
     // Disclose VRF reveal seed to lock winning commitment
-    const win_commitment = persistent_hash<Vector<2, Bytes<32>>>([
+    const win_commitment = persistentCommit<Bytes<32>>(
         vrf_reveal,
         disclose(pad(32, "WINNING_SEED"))
-    ]);
+    );
 
     winning_commitment = win_commitment;
     is_completed = true;
@@ -67,15 +46,15 @@ export circuit draw_winner(winning_ticket: Uint<32>, vrf_reveal: Bytes<32>): Byt
 }
 
 export circuit claim_prize(secret_salt: Bytes<32>): Boolean {
-    require(is_completed, "Lottery is not yet drawn");
+    assert(is_completed, "Lottery is not yet drawn");
 
     // Verify private secret_salt produces the winning commitment in ZK
-    const claimed_commitment = persistent_hash<Vector<2, Bytes<32>>>([
+    const claimed_commitment = persistentCommit<Bytes<32>>(
         secret_salt,
         disclose(pad(32, "DEPOSIT_SALT"))
-    ]);
+    );
 
-    require(claimed_commitment == winning_commitment, "Invalid ticket secret for prize claim");
+    assert(claimed_commitment == winning_commitment, "Invalid ticket secret for prize claim");
 
     // Transfer/clear pot upon valid ZK claim
     pot_balance = 0;

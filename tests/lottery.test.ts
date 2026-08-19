@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { LotteryContract, computeCommitment } from '../managed/lottery/contract/index.js';
+import { LotteryContract, computeCommitment } from '../frontend/src/contract.js';
 
 describe('Decentralized Lottery Compact Contract Unit Tests', () => {
   let contract: LotteryContract;
