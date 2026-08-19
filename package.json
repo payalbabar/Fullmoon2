@@ -4,6 +4,7 @@
   "description": "Decentralized Privacy-Preserving Lottery on Midnight Network",
   "type": "module",
   "scripts": {
+    "compact-compile": "wsl compactc contracts/lottery.compact managed/lottery",
     "setup": "echo 'Setup complete'",
     "compile": "tsc --noEmit",
     "deploy": "npx tsx src/deploy.ts",

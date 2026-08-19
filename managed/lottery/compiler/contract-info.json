@@ -1,0 +1,239 @@
+{
+  "compiler-version": "0.31.1",
+  "language-version": "0.23.0",
+  "runtime-version": "0.16.0",
+  "circuits": [
+    {
+      "name": "commitment",
+      "pure": true,
+      "proof": false,
+      "arguments": [
+        {
+          "name": "ticket",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "salt",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "enter",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticket",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "salt",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "draw",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "randomValue",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "claim",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+        {
+          "name": "ticket",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "salt",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "userAddr",
+          "type": {
+            "type-name": "Struct",
+            "name": "UserAddress",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "newRound",
+      "pure": false,
+      "proof": true,
+      "arguments": [
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    }
+  ],
+  "witnesses": [
+  ],
+  "contracts": [
+  ],
+  "ledger": [
+    {
+      "name": "roundStatus",
+      "index": 0,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Enum",
+        "name": "RoundState",
+        "elements": [
+          "OPEN",
+          "DRAWN",
+          "CLAIMED"
+        ]
+      }
+    },
+    {
+      "name": "entrants",
+      "index": 1,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "pool",
+      "index": 2,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "entryFee",
+      "index": 3,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "entries",
+      "index": 4,
+      "exported": true,
+      "storage": "Map",
+      "key": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      },
+      "value": {
+        "type-name": "Bytes",
+        "length": 32
+      }
+    },
+    {
+      "name": "winningIndex",
+      "index": 5,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Uint",
+        "maxval": 4294967295
+      }
+    },
+    {
+      "name": "winner",
+      "index": 6,
+      "exported": true,
+      "storage": "Cell",
+      "type": {
+        "type-name": "Struct",
+        "name": "Maybe",
+        "elements": [
+          {
+            "name": "is_some",
+            "type": {
+              "type-name": "Boolean"
+            }
+          },
+          {
+            "name": "value",
+            "type": {
+              "type-name": "Struct",
+              "name": "UserAddress",
+              "elements": [
+                {
+                  "name": "bytes",
+                  "type": {
+                    "type-name": "Bytes",
+                    "length": 32
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

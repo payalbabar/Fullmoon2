@@ -1,8 +1,6 @@
 node_modules/
 dist/
 build/
-managed/
-contracts/managed/
 .midnight-state.json
 .midnight-wallet-state/
 *.env.local
